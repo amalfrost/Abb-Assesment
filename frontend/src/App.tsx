@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import * as api from './api'
 import { useGame } from './hooks/useGame'
+import Cell from './components/Cell'
+import Board from './components/Board'
 
 function App() {
   const [gameId, setGameId] = useState<string | null>(null)
@@ -16,14 +18,18 @@ function App() {
   // Temporary debug view - replaced by Board/Controls in the next steps
   return (
     <div className="p-8 space-y-4">
-      <pre>{game.board.map(c => c ?? '.').join('')} | turn: {game.currentPlayer} | {game.status}</pre>
+      {/* <pre>{game.board.map(c => c ?? '.').join('')} | turn: {game.currentPlayer} | {game.status}</pre>
       <div className="space-x-2">
         <button className="border px-3 py-1" disabled={isPending} onClick={() => move(1, 1)}>Play center</button>
         <button className="border px-3 py-1" disabled={isPending} onClick={() => move(0, 0)}>Play top-left</button>
         <button className="border px-3 py-1" disabled={isPending} onClick={undo}>Undo</button>
         <button className="border px-3 py-1" disabled={isPending} onClick={reset}>Reset</button>
       </div>
-      {error && <p className="text-red-600">{error.message}</p>}
+      {error && <p className="text-red-600">{error.message}</p>} */}
+
+      <Board game={game} disabled={isPending} onCellClick={move} />
+
+
     </div>
   )
 }
