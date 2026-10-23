@@ -17,26 +17,26 @@ const Scoreboard = () => {
     })
 
     const items = [
-        { label: 'X Wins', value: scoreboard?.xWins, color: 'text-blue-600' },
-        { label: 'O Wins', value: scoreboard?.oWins, color: 'text-red-600' },
-        { label: 'Draws', value: scoreboard?.draws, color: 'text-amber-600' },
+        { label: 'X wins', value: scoreboard?.xWins, color: 'text-x' },
+        { label: 'O wins', value: scoreboard?.oWins, color: 'text-o' },
+        { label: 'Draws', value: scoreboard?.draws, color: 'text-ink' },
     ]
 
     return (
         <div>
-            <div className="grid grid-cols-3 gap-2 mb-3">
+            <dl className="flex divide-x divide-line">
                 {items.map(item => (
-                    <div key={item.label} className="rounded-lg border border-gray-200 p-3 text-center">
-                        <p className={`text-2xl font-bold ${item.color}`}>{item.value ?? '-'}</p>
-                        <p className="text-xs uppercase tracking-wide text-gray-500">{item.label}</p>
+                    <div key={item.label} className="flex-1 px-4 first:pl-0">
+                        <dd className={`text-4xl font-bold tabular-nums ${item.color}`}>{item.value ?? '-'}</dd>
+                        <dt className="text-sm text-muted">{item.label}</dt>
                     </div>
                 ))}
-            </div>
+            </dl>
             <button
-                className="text-sm text-gray-600 underline hover:text-gray-900 disabled:opacity-40"
+                className="mt-3 text-sm text-muted underline underline-offset-2 hover:text-ink disabled:opacity-40"
                 disabled={resetMutation.isPending}
                 onClick={() => resetMutation.mutate()}>
-                Reset Scoreboard
+                Reset scoreboard
             </button>
         </div>
     )

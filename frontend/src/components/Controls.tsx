@@ -7,7 +7,7 @@ interface ControlsProps {
     onReset: () => void
 }
 
-const buttonStyle = 'px-4 py-2 rounded-lg font-medium border disabled:opacity-40 disabled:cursor-not-allowed'
+const buttonStyle = 'px-4 py-2 rounded-md font-medium border-2 border-ink disabled:opacity-35 disabled:cursor-not-allowed'
 
 const Controls = ({ game, disabled, onUndo, onReset }: ControlsProps) => {
     // Undo is off once the game is finished (Option A), so the scoreboard stays final
@@ -16,16 +16,16 @@ const Controls = ({ game, disabled, onUndo, onReset }: ControlsProps) => {
     return (
         <div className="flex gap-3">
             <button
-                className={`${buttonStyle} bg-white border-gray-300 hover:bg-gray-50`}
+                className={`${buttonStyle} bg-paper text-ink enabled:hover:bg-hover`}
                 disabled={!canUndo}
                 onClick={onUndo}>
-                Undo Last Move
+                Undo last move
             </button>
             <button
-                className={`${buttonStyle} bg-gray-800 border-gray-800 text-white hover:bg-gray-700`}
+                className={`${buttonStyle} bg-ink text-paper enabled:hover:bg-ink/85`}
                 disabled={disabled}
                 onClick={onReset}>
-                Reset Game
+                Reset game
             </button>
         </div>
     )

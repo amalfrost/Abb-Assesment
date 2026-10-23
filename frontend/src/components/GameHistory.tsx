@@ -27,45 +27,53 @@ const GameHistory = () => {
     return (
         <div>
             <button
-                className="px-4 py-2 rounded-lg font-medium border bg-white border-gray-300 hover:bg-gray-50"
+                className="text-sm font-medium text-ink underline underline-offset-2 hover:text-x"
+                aria-expanded={open}
                 onClick={() => setOpen(!open)}>
                 {open ? 'Hide game history' : 'Show game history'}
             </button>
 
             {open && (
-                <div className="mt-3">
-                    {isLoading && <p className="text-sm text-gray-500">Loading...</p>}
+                <div className="mt-3 overflow-x-auto">
+                    {isLoading && <p className="text-sm text-muted">Loading...</p>}
 
                     {history && history.length === 0 && (
-                        <p className="text-sm text-gray-500">No finished games yet.</p>
+                        <p className="text-sm text-muted">Finished games are listed here.</p>
                     )}
 
                     {history && history.length > 0 && (
                         <table className="w-full text-sm text-left">
-                            <thead className="text-gray-500 border-b border-gray-200">
+                            <thead className="text-muted border-b border-line">
                                 <tr>
-                                    <th className="py-1 pr-4 font-medium">#</th>
-                                    <th className="py-1 pr-4 font-medium">Finished</th>
-                                    <th className="py-1 pr-4 font-medium">Mode</th>
-                                    <th className="py-1 pr-4 font-medium">Result</th>
-                                    <th className="py-1 font-medium">Moves</th>
+                                    <th className="py-1.5 pr-4 font-medium">Game</th>
+                                    <th className="py-1.5 pr-4 font-medium">Finished</th>
+                                    <th className="py-1.5 pr-4 font-medium">Mode</th>
+                                    <th className="py-1.5 pr-4 font-medium">Result</th>
+                                    <th className="py-1.5 font-medium">Moves</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {history.map(entry => (
                                     <Fragment key={entry.id}>
-                                        <tr
-                                            className="border-b border-gray-100 cursor-pointer hover:bg-gray-50"
-                                            onClick={() => toggleRow(entry.id)}>
-                                            <td className="py-1 pr-4">{entry.id}</td>
-                                            <td className="py-1 pr-4">{new Date(entry.finishedAt).toLocaleString()}</td>
-                                            <td className="py-1 pr-4">{entry.mode === 'Computer' ? 'vs Computer' : 'Two Player'}</td>
-                                            <td className="py-1 pr-4 font-semibold">{resultText(entry)}</td>
-                                            <td className="py-1">{entry.moves.length}</td>
+                                        <tr className="border-b border-line">
+                                            <td className="py-1.5 pr-4 tabular-nums">{entry.id}</td>
+                                            <td className="py-1.5 pr-4">{new Date(entry.finishedAt).toLocaleString()}</td>
+                                            <td className="py-1.5 pr-4">{entry.mode === 'Computer' ? 'vs Computer' : 'Two player'}</td>
+                                            <td className={`py-1.5 pr-4 font-semibold ${entry.winner === 'X' ? 'text-x' : entry.winner === 'O' ? 'text-o' : ''}`}>
+                                                {resultText(entry)}
+                                            </td>
+                                            <td className="py-1.5">
+                                                <button
+                                                    className="underline underline-offset-2 hover:text-x tabular-nums"
+                                                    aria-expanded={expandedId === entry.id}
+                                                    onClick={() => toggleRow(entry.id)}>
+                                                    {expandedId === entry.id ? 'Hide' : `${entry.moves.length} moves`}
+                                                </button>
+                                            </td>
                                         </tr>
                                         {expandedId === entry.id && (
                                             <tr>
-                                                <td colSpan={5} className="py-2 pl-4 bg-gray-50">
+                                                <td colSpan={5} className="py-2 pl-4 bg-hover">
                                                     <MoveHistory moves={entry.moves} />
                                                 </td>
                                             </tr>

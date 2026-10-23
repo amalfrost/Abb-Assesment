@@ -27,32 +27,48 @@ function App() {
 
   const { game, move, undo, reset, isPending, error } = useGame(gameId)
 
-  if (!game) return <p className="p-8">Loading...</p>
-
   return (
-    <div className="p-8 space-y-4">
-      <ModeSelector mode={mode} disabled={isPending} onChange={setMode} />
-      <GameStatus game={game} />
-      <Board game={game} disabled={isPending} onCellClick={move} />
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-8 sm:py-12">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-ink pb-6">
+        <h1 className="text-4xl sm:text-5xl font-black tracking-tight [font-stretch:125%]">Tic Tac Toe</h1>
+        <ModeSelector mode={mode} disabled={isPending} onChange={setMode} />
+      </header>
 
-      <Controls game={game} disabled={isPending} onUndo={undo} onReset={reset} />
+      {!game ? (
+        <p className="mt-10 text-muted">Starting a new game...</p>
+      ) : (
+        <div className="mt-10 grid gap-12 md:grid-cols-[auto_1fr]">
+          {/* Left: the game itself */}
+          <main className="space-y-6">
+            <GameStatus game={game} />
+            <Board game={game} disabled={isPending} onCellClick={move} />
+            <Controls game={game} disabled={isPending} onUndo={undo} onReset={reset} />
+            {error && (
+              <p role="alert" className="max-w-xs border-l-4 border-ink pl-3 text-sm">
+                {error.message}
+              </p>
+            )}
+          </main>
 
-      {error && <p className="text-red-600">{error.message}</p>}
+          {/* Right: results and history */}
+          <aside className="space-y-10 min-w-0">
+            <section>
+              <h2 className="mb-3 text-lg font-bold">Scoreboard</h2>
+              <Scoreboard />
+            </section>
 
-      <section className="max-w-sm">
-        <h2 className="text-lg font-semibold mb-2">Scoreboard</h2>
-        <Scoreboard />
-      </section>
+            <section>
+              <h2 className="mb-3 text-lg font-bold">Move history</h2>
+              <MoveHistory moves={game.moves} />
+            </section>
 
-      <section className="max-w-sm">
-        <h2 className="text-lg font-semibold mb-2">Move History</h2>
-        <MoveHistory moves={game.moves} />
-      </section>
-
-      <section className="max-w-xl">
-        <h2 className="text-lg font-semibold mb-2">Game History</h2>
-        <GameHistory />
-      </section>
+            <section>
+              <h2 className="mb-3 text-lg font-bold">Game history</h2>
+              <GameHistory />
+            </section>
+          </aside>
+        </div>
+      )}
     </div>
   )
 }

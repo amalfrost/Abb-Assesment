@@ -1,1 +1,56 @@
 @import "tailwindcss";
+
+/* Design tokens - used as Tailwind classes, e.g. bg-paper, text-ink, text-x */
+@theme {
+  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+
+  --color-paper: #fafbfc;
+  --color-ink: #1b1f2a;
+  --color-muted: #5b6270;
+  --color-line: #dde1e7;
+  --color-hover: #eef1f5;
+  --color-x: #1f4fd1;
+  --color-o: #d6336c;
+  /* solid tints for winning cells - must be opaque, or the ink grid shows through */
+  --color-x-tint: #dbe3f6;
+  --color-o-tint: #f5dfe8;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-x);
+  outline-offset: 2px;
+}
+
+/* X / O marks and the winning line are drawn as strokes when they appear */
+.draw-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 220ms ease-out forwards;
+}
+
+.draw-delay {
+  animation-delay: 120ms;
+}
+
+.draw-slow {
+  animation-duration: 380ms;
+  animation-delay: 200ms;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw-stroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

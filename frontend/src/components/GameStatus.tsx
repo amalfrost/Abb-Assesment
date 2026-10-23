@@ -5,24 +5,26 @@ interface GameStatusProps {
 }
 
 const GameStatus = ({ game }: GameStatusProps) => {
+    const vsComputer = game.mode === 'Computer'
     let message = `Player ${game.currentPlayer}'s turn`
-    let color = 'text-gray-800'
+    let color = game.currentPlayer === 'X' ? 'text-x' : 'text-o'
 
     if (game.status === 'Won') {
-        message = `Player ${game.winner} wins!`
-        color = game.winner === 'X' ? 'text-blue-600' : 'text-red-600'
+        if (vsComputer) message = game.winner === 'X' ? 'You win' : 'The computer wins'
+        else message = `Player ${game.winner} wins`
+        color = game.winner === 'X' ? 'text-x' : 'text-o'
     } else if (game.status === 'Draw') {
-        message = "It's a draw!"
-        color = 'text-amber-600'
+        message = "It's a draw"
+        color = 'text-ink'
+    } else if (vsComputer) {
+        message = 'Your turn (X)'
     }
 
+    // aria-live so screen readers announce turn changes and results
     return (
-        <div>
-            <p className="text-sm uppercase tracking-wide text-gray-500">
-                {game.mode === 'Computer' ? 'vs Computer' : 'Two Player'}
-            </p>
-            <p className={`text-2xl font-semibold ${color}`}>{message}</p>
-        </div>
+        <p aria-live="polite" className={`text-2xl font-semibold ${color}`}>
+            {message}
+        </p>
     )
 }
 

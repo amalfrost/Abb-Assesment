@@ -7,18 +7,19 @@ interface ModeSelectorProps {
 }
 
 const MODES: { value: GameMode, label: string }[] = [
-    { value: 'TwoPlayer', label: 'Two Player' },
+    { value: 'TwoPlayer', label: 'Two player' },
     { value: 'Computer', label: 'vs Computer' },
 ]
 
 const ModeSelector = ({ mode, disabled, onChange }: ModeSelectorProps) => {
     return (
-        <div className="inline-flex rounded-lg border border-gray-300 overflow-hidden">
+        <div role="group" aria-label="Game mode" className="inline-flex rounded-md border-2 border-ink overflow-hidden">
             {MODES.map(option => (
                 <button
                     key={option.value}
-                    className={`px-4 py-2 text-sm font-medium disabled:cursor-not-allowed
-                        ${mode === option.value ? 'bg-gray-800 text-white' : 'bg-white hover:bg-gray-50'}`}
+                    aria-pressed={mode === option.value}
+                    className={`px-4 py-1.5 text-sm font-medium disabled:cursor-not-allowed
+                        ${mode === option.value ? 'bg-ink text-paper' : 'bg-paper text-ink enabled:hover:bg-hover'}`}
                     disabled={disabled}
                     onClick={() => onChange(option.value)}>
                     {option.label}
