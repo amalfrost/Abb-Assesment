@@ -2,7 +2,8 @@
 // finished-game history are also written to data.json so they survive a restart.
 import fs from 'node:fs';
 
-const DATA_FILE = new URL('../data.json', import.meta.url);
+// DATA_FILE can be overridden so tests don't touch the real data
+const DATA_FILE = process.env.DATA_FILE || new URL('../data.json', import.meta.url);
 
 const games = new Map();
 let { scoreboard, history } = loadData();
