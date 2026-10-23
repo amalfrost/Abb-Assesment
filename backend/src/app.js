@@ -2,7 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import { randomUUID } from 'node:crypto';
 import { createGame, makeMove, undoMove, resetGame, GameError } from './gameLogic.js';
+import { pickComputerMove } from './computer.js';
 import * as store from './store.js';
+
+const MODES = ['TwoPlayer', 'Computer'];
 
 const app = express();
 app.use(cors());
@@ -23,7 +26,7 @@ function findGame(req, res, next) {
 
 app.post('/api/games', (req, res) => {
   const mode = req.body?.mode ?? 'TwoPlayer';
-  if (mode !== 'TwoPlayer') {
+  if (!MODES.includes(mode)) {
     return res.status(400).json({ error: `Unsupported mode: ${mode}` });
   }
 
@@ -38,8 +41,14 @@ app.get('/api/games/:id', findGame, (req, res) => {
 
 app.post('/api/games/:id/moves', findGame, (req, res) => {
   const { player, row, col } = req.body ?? {};
-  const game = makeMove(req.game, player, row, col);
-  // computer reply goes here in Stage 2
+  let game = makeMove(req.game, player, row, col);
+
+  // The computer (always O) replies in the same request, unless X just ended the game
+  if (game.mode === 'Computer' && game.status === 'InProgress') {
+    const cell = pickComputerMove(game.board);
+    game = makeMove(game, 'O', Math.floor(cell / 3), cell % 3);
+  }
+
   store.updateGame(game);
   res.json(toResponse(game));
 });
