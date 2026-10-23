@@ -13,13 +13,16 @@ const MODES: { value: GameMode, label: string }[] = [
 
 const ModeSelector = ({ mode, disabled, onChange }: ModeSelectorProps) => {
     return (
-        <div role="group" aria-label="Game mode" className="inline-flex rounded-md border-2 border-ink overflow-hidden">
+        <div role="group" aria-label="Game mode" className="flex flex-wrap gap-3">
             {MODES.map(option => (
                 <button
                     key={option.value}
                     aria-pressed={mode === option.value}
-                    className={`px-4 py-1.5 text-sm font-medium disabled:cursor-not-allowed
-                        ${mode === option.value ? 'bg-ink text-paper' : 'bg-paper text-ink enabled:hover:bg-hover'}`}
+                    className={`min-h-11 rounded-2xl border-3 border-ink px-4 font-bold text-ink transition
+                        enabled:cursor-pointer disabled:cursor-not-allowed disabled:opacity-60
+                        ${mode === option.value
+                            ? 'bg-sun shadow-pop'
+                            : 'bg-card shadow-pop-sm enabled:hover:-translate-x-px enabled:hover:-translate-y-px'}`}
                     disabled={disabled}
                     onClick={() => onChange(option.value)}>
                     {option.label}

@@ -24,16 +24,16 @@ const Scoreboard = () => {
 
     return (
         <div>
-            <dl className="flex divide-x divide-line">
+            <dl className="grid grid-cols-3 gap-3">
                 {items.map(item => (
-                    <div key={item.label} className="flex-1 px-4 first:pl-0">
-                        <dd className={`text-4xl font-bold tabular-nums ${item.color}`}>{item.value ?? '-'}</dd>
-                        <dt className="text-sm text-muted">{item.label}</dt>
+                    <div key={item.label} className="rounded-2xl border-3 border-ink bg-card px-2 py-2.5 text-center shadow-pop">
+                        <dt className="text-sm font-bold">{item.label}</dt>
+                        <dd className={`font-display text-4xl font-bold tabular-nums ${item.color}`}>{item.value ?? '-'}</dd>
                     </div>
                 ))}
             </dl>
             <button
-                className="mt-3 text-sm text-muted underline underline-offset-2 hover:text-ink disabled:opacity-40"
+                className="mt-4 text-sm font-bold text-muted underline underline-offset-2 hover:text-ink disabled:opacity-40"
                 disabled={resetMutation.isPending}
                 onClick={() => resetMutation.mutate()}>
                 Reset scoreboard

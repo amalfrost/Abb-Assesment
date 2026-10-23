@@ -34,7 +34,7 @@ const GameHistory = () => {
     return (
         <div>
             <button
-                className="text-sm font-medium text-ink underline underline-offset-2 hover:text-x"
+                className="btn-pop cursor-pointer rounded-xl border-3 border-ink bg-card px-3 py-1.5 text-sm font-bold text-ink"
                 aria-expanded={open}
                 onClick={() => setOpen(!open)}>
                 {open ? 'Hide game history' : 'Show game history'}
