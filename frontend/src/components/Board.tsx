@@ -15,7 +15,7 @@ const Board = ({ game, disabled, onCellClick }: BoardProps) => {
                     key={i}
                     value={value}
                     highlighted={game.winningCells.includes(i)}
-                    disabled={disabled}
+                    disabled={disabled || game.status !== 'InProgress' || value !== null}
                     onClick={() => onCellClick(Math.floor(i / 3), i % 3)}
                 />
             ))}
