@@ -3,6 +3,8 @@ import * as api from './api'
 import { useGame } from './hooks/useGame'
 import Board from './components/Board'
 import GameStatus from './components/GameStatus'
+import Controls from './components/Controls'
+import MoveHistory from './components/MoveHistory'
 
 function App() {
   const [gameId, setGameId] = useState<string | null>(null)
@@ -20,13 +22,14 @@ function App() {
       <GameStatus game={game} />
       <Board game={game} disabled={isPending} onCellClick={move} />
 
-      {/* Replaced by the Controls component in the next step */}
-      <div className="space-x-2">
-        <button className="border px-3 py-1" disabled={isPending} onClick={undo}>Undo</button>
-        <button className="border px-3 py-1" disabled={isPending} onClick={reset}>Reset</button>
-      </div>
+      <Controls game={game} disabled={isPending} onUndo={undo} onReset={reset} />
 
       {error && <p className="text-red-600">{error.message}</p>}
+
+      <section className="max-w-sm">
+        <h2 className="text-lg font-semibold mb-2">Move History</h2>
+        <MoveHistory moves={game.moves} />
+      </section>
     </div>
   )
 }
