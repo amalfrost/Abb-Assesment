@@ -5,6 +5,7 @@ import Board from './components/Board'
 import GameStatus from './components/GameStatus'
 import Controls from './components/Controls'
 import MoveHistory from './components/MoveHistory'
+import Scoreboard from './components/Scoreboard'
 
 function App() {
   const [gameId, setGameId] = useState<string | null>(null)
@@ -25,6 +26,11 @@ function App() {
       <Controls game={game} disabled={isPending} onUndo={undo} onReset={reset} />
 
       {error && <p className="text-red-600">{error.message}</p>}
+
+      <section className="max-w-sm">
+        <h2 className="text-lg font-semibold mb-2">Scoreboard</h2>
+        <Scoreboard />
+      </section>
 
       <section className="max-w-sm">
         <h2 className="text-lg font-semibold mb-2">Move History</h2>
