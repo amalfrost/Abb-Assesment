@@ -5,7 +5,14 @@ import type { HistoryEntry } from '../types'
 import MoveHistory from './MoveHistory'
 
 function resultText(entry: HistoryEntry) {
-    return entry.status === 'Draw' ? 'Draw' : `${entry.winner} won`
+    if (entry.status === 'Draw' || !entry.winner) return 'Draw'
+    return `${entry.players?.[entry.winner] ?? entry.winner} won`
+}
+
+// Older entries have no names, so fall back to the mode
+function playersText(entry: HistoryEntry) {
+    if (entry.players) return `${entry.players.X} vs ${entry.players.O}`
+    return entry.mode === 'Computer' ? 'vs Computer' : 'Two player'
 }
 
 const GameHistory = () => {
@@ -47,7 +54,7 @@ const GameHistory = () => {
                                 <tr>
                                     <th className="py-1.5 pr-4 font-medium">Game</th>
                                     <th className="py-1.5 pr-4 font-medium">Finished</th>
-                                    <th className="py-1.5 pr-4 font-medium">Mode</th>
+                                    <th className="py-1.5 pr-4 font-medium">Players</th>
                                     <th className="py-1.5 pr-4 font-medium">Result</th>
                                     <th className="py-1.5 font-medium">Moves</th>
                                 </tr>
@@ -58,7 +65,7 @@ const GameHistory = () => {
                                         <tr className="border-b border-line">
                                             <td className="py-1.5 pr-4 tabular-nums">{entry.id}</td>
                                             <td className="py-1.5 pr-4">{new Date(entry.finishedAt).toLocaleString()}</td>
-                                            <td className="py-1.5 pr-4">{entry.mode === 'Computer' ? 'vs Computer' : 'Two player'}</td>
+                                            <td className="py-1.5 pr-4">{playersText(entry)}</td>
                                             <td className={`py-1.5 pr-4 font-semibold ${entry.winner === 'X' ? 'text-x' : entry.winner === 'O' ? 'text-o' : ''}`}>
                                                 {resultText(entry)}
                                             </td>
@@ -74,7 +81,7 @@ const GameHistory = () => {
                                         {expandedId === entry.id && (
                                             <tr>
                                                 <td colSpan={5} className="py-2 pl-4 bg-hover">
-                                                    <MoveHistory moves={entry.moves} />
+                                                    <MoveHistory moves={entry.moves} players={entry.players} />
                                                 </td>
                                             </tr>
                                         )}

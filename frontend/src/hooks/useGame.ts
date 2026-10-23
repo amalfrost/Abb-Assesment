@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from '../api'
-import type { Game } from "../types";
+import type { Game, Players } from "../types";
 
 export function useGame(gameId: string | null) {
 
@@ -34,12 +34,18 @@ export function useGame(gameId: string | null) {
         onSuccess
     })
 
+    const renameMutation = useMutation({
+        mutationFn: (players: Partial<Players>) => api.renamePlayers(gameId!, players),
+        onSuccess
+    })
+
     return {
         game: gameQuery.data,
         move: (row: number, col: number) => moveMutation.mutate({ row, col }),
         undo: () => undoMutation.mutate(),
         reset: () => resetMutation.mutate(),
-        isPending: moveMutation.isPending || undoMutation.isPending || resetMutation.isPending,
-        error: moveMutation.error ?? undoMutation.error ?? resetMutation.error,
+        rename: (players: Partial<Players>) => renameMutation.mutate(players),
+        isPending: moveMutation.isPending || undoMutation.isPending || resetMutation.isPending || renameMutation.isPending,
+        error: moveMutation.error ?? undoMutation.error ?? resetMutation.error ?? renameMutation.error,
     }
 }

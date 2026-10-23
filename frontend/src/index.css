@@ -11,6 +11,7 @@
   --color-hover: #eef1f5;
   --color-x: #1f4fd1;
   --color-o: #d6336c;
+  --color-ok: #1e8a4c; /* confirm actions, e.g. saving a name */
   /* solid tints for winning cells - must be opaque, or the ink grid shows through */
   --color-x-tint: #dbe3f6;
   --color-o-tint: #f5dfe8;

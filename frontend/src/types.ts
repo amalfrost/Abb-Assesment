@@ -4,6 +4,7 @@ export type Player = 'X' | 'O'
 export type Cell = Player | null
 export type GameMode = 'TwoPlayer' | 'Computer'
 export type GameStatus = 'InProgress' | 'Won' | 'Draw'
+export type Players = Record<Player, string> // e.g. { X: 'Amal', O: 'Computer' }
 
 export interface Move {
   number: number
@@ -21,6 +22,7 @@ export interface Scoreboard {
 export interface Game {
   id: string
   mode: GameMode
+  players: Players
   board: Cell[]
   currentPlayer: Player
   status: GameStatus
@@ -34,6 +36,7 @@ export interface HistoryEntry {
   id: number
   gameId: string
   mode: GameMode
+  players?: Players // missing on games saved before names were added
   status: GameStatus
   winner: Player | null
   moves: Move[]

@@ -1,4 +1,4 @@
-import type { Game, GameMode, HistoryEntry, Player, Scoreboard } from './types'
+import type { Game, GameMode, HistoryEntry, Player, Players, Scoreboard } from './types'
 
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
     const res = await fetch(`/api${url}`, {
@@ -10,8 +10,11 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
     return data
 }
 
-export const createGame = (mode: GameMode) =>
-    request<Game>('/games', { method: 'POST', body: JSON.stringify({ mode }) })
+export const createGame = (mode: GameMode, players?: Partial<Players>) =>
+    request<Game>('/games', { method: 'POST', body: JSON.stringify({ mode, players }) })
+
+export const renamePlayers = (id: string, players: Partial<Players>) =>
+    request<Game>(`/games/${id}/players`, { method: 'PUT', body: JSON.stringify(players) })
 
 export const getGame = (id: string) => request<Game>(`/games/${id}`)
 
