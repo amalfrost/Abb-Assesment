@@ -76,6 +76,53 @@ test('rejects an unknown mode', async () => {
   assert.equal(res.status, 400);
 });
 
+// ---------- Player names ----------
+
+test('new games get default player names', async () => {
+  const res = await post('/games', {});
+  assert.deepEqual(res.body.players, { X: 'Player X', O: 'Player O' });
+});
+
+test('player names can be set when creating a game and are trimmed', async () => {
+  const res = await post('/games', { players: { X: '  Amal ', O: 'Priya' } });
+  assert.deepEqual(res.body.players, { X: 'Amal', O: 'Priya' });
+});
+
+test('in computer mode O is always named Computer', async () => {
+  const res = await post('/games', { mode: 'Computer', players: { X: 'Amal', O: 'Priya' } });
+  assert.deepEqual(res.body.players, { X: 'Amal', O: 'Computer' });
+});
+
+test('players can be renamed during a game; blank falls back to default', async () => {
+  const id = await newGame();
+  await play(id, [['X', 0, 0]]);
+  const res = await request('PUT', `/games/${id}/players`, { X: 'Amal', O: '   ' });
+  assert.equal(res.status, 200);
+  assert.deepEqual(res.body.players, { X: 'Amal', O: 'Player O' });
+  assert.equal(res.body.moves.length, 1); // board untouched
+});
+
+test('names that are too long or not text are rejected', async () => {
+  const id = await newGame();
+  const tooLong = await request('PUT', `/games/${id}/players`, { X: 'A'.repeat(21) });
+  assert.equal(tooLong.status, 400);
+  const notText = await post('/games', { players: { X: 42 } });
+  assert.equal(notText.status, 400);
+});
+
+test('players cannot be renamed after the game is finished', async () => {
+  const id = await newGame();
+  await play(id, [['X', 0, 0], ['O', 1, 0], ['X', 0, 1], ['O', 1, 1], ['X', 0, 2]]);
+  const res = await request('PUT', `/games/${id}/players`, { X: 'Amal' });
+  assert.equal(res.status, 400);
+});
+
+test('reset keeps the player names', async () => {
+  const res = await post('/games', { players: { X: 'Amal', O: 'Priya' } });
+  const reset = await post(`/games/${res.body.id}/reset`);
+  assert.deepEqual(reset.body.players, { X: 'Amal', O: 'Priya' });
+});
+
 // ---------- GET /api/games/:id ----------
 
 test('returns the current game state', async () => {
@@ -281,13 +328,14 @@ test('scoreboard reset zeroes counts but keeps history', async () => {
   assert.equal((await get('/history')).body.length, historyBefore);
 });
 
-test('history lists finished games newest first', async () => {
-  const id = await newGame();
+test('history lists finished games newest first, with player names', async () => {
+  const id = (await post('/games', { players: { X: 'Amal', O: 'Priya' } })).body.id;
   await play(id, [['X', 0, 0], ['O', 0, 1], ['X', 1, 1], ['O', 0, 2], ['X', 2, 2]]);
 
   const res = await get('/history');
   const latest = res.body[0];
   assert.equal(latest.gameId, id);
+  assert.deepEqual(latest.players, { X: 'Amal', O: 'Priya' });
   assert.equal(latest.status, 'Won');
   assert.equal(latest.winner, 'X');
   assert.equal(latest.moves.length, 5);
