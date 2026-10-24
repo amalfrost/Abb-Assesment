@@ -71,7 +71,7 @@ const GameHistory = () => {
                                             </td>
                                             <td className="py-1.5">
                                                 <button
-                                                    className="underline underline-offset-2 hover:text-x tabular-nums"
+                                                    className="cursor-pointer underline underline-offset-2 hover:text-x tabular-nums"
                                                     aria-expanded={expandedId === entry.id}
                                                     onClick={() => toggleRow(entry.id)}>
                                                     {expandedId === entry.id ? 'Hide' : `${entry.moves.length} moves`}

@@ -33,7 +33,7 @@ const Scoreboard = () => {
                 ))}
             </dl>
             <button
-                className="mt-4 text-sm font-bold text-muted underline underline-offset-2 hover:text-ink disabled:opacity-40"
+                className="mt-4 cursor-pointer text-sm font-bold text-muted underline underline-offset-2 hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
                 disabled={resetMutation.isPending}
                 onClick={() => resetMutation.mutate()}>
                 Reset scoreboard
