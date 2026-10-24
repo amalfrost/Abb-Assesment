@@ -12,6 +12,12 @@ A browser-based Tic Tac Toe game with a React + TypeScript frontend and a Node.j
 
 **Stack note:** the brief mentions Angular and .NET in places. As agreed for this submission, the frontend is **React** and the backend is **Node.js (Express)**, so the whole project is in JavaScript/TypeScript.
 
+<img width="1899" height="924" alt="image" src="https://github.com/user-attachments/assets/db966b88-cd13-42bc-a95e-878971917dcd" />
+<img width="1904" height="921" alt="image" src="https://github.com/user-attachments/assets/00284f19-89ec-44c6-a1b6-e7e3815e622a" />
+<img width="1873" height="911" alt="image" src="https://github.com/user-attachments/assets/67773bf6-0a0e-43e5-9b62-a42d82b0d7b5" />
+
+
+
 ## 2. Tech stack
 
 | Layer | Choice | Why |
