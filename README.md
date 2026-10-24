@@ -158,43 +158,62 @@ There are 33 tests in `backend/tests/api.test.js`. They start the real Express a
 
 ## 8. AI tools and prompt summary
 
-**Tool:** Claude Code (Anthropic) in VS Code.
+**Tool:** Claude Code (Anthropic) in VS Code. I used it as a pair programmer: for planning, for implementing the parts I specified, and for reviewing.
 
-**How the requirement became a specification**
-1. I pasted the full brief and asked for a plan with my chosen stack: *"React + Tailwind + React Query for the frontend, Node.js for the backend (not .NET) … make the project as simple as possible."*
-2. I reviewed the plan and changed its scope:
-   - Build two-player mode first and add computer mode later.
-   - Add a **game history** feature, stored on the backend in a JSON file rather than in localStorage.
-3. Before coding, I settled the main decisions: the backend is the source of truth, Undo uses Option A, the computer moves on the server, and one repo has two folders with no monorepo tooling.
+### How I worked
 
-**Prompts used (in order, paraphrased)**
-- "Give me a clear plan based on the problem statement."
-- "Just implement the backend, step by step. After each step, review the code and commit."
-- "Test all the endpoints in the backend, review, and make sure I can understand everything."
-- "For the frontend I'd like to do it myself, but give me instructions", then "let's move one step at a time."
+**1. Planning, mainly for the backend.** I used Claude Code's plan mode to turn the brief into a plan. The main decisions I made at this stage:
+- **Node.js + Express** for the backend instead of .NET, so the whole project is in one language.
+- **`data.json` for persistence.** It's simple, it needs no database setup, and the scoreboard and history survive a restart. Storage is isolated in `store.js`, so moving to a SQL database later only changes that one file.
+- **The backend owns all game state**, and Undo uses Option A (disabled after a game ends).
+- **Two-player mode first**, computer mode afterwards.
+
+**2. Backend.** I built the REST API one step at a time, reviewing and committing each step:
+1. game rules
+2. the store and routes
+3. the computer opponent
+
+I tested the endpoints with **Postman**, then added an automated API test suite.
+
+**3. Frontend stack: React + Tailwind + React Query.**
+- **React Query** fits an app where the server is the source of truth. Each REST call becomes a query or a mutation, and it handles loading and error state and the cache. After a move, the server's response goes straight into the cache, and the scoreboard and history refresh on their own without hand-written `useEffect` fetching.
+- **Tailwind** keeps the styling next to the components, and the design tokens (colors, fonts, shadows) live in one place.
+- I later switched the frontend to **TypeScript**, so the API contract is typed once in `types.ts` and shared by every component.
+
+**4. Frontend, one piece at a time.**
+1. Scaffolded the Vite app, installed the dependencies and set up the config.
+2. Set up the **Vite proxy** (`/api` → `localhost:4000`) to avoid CORS issues and hard-coded URLs.
+3. Wired up the REST API with **React Query**: the provider, the `useGame` hook with the game query, and mutations for move, undo and reset. I then checked that the frontend was talking to the backend.
+4. Built the game itself:
+   - started with the **`Cell` component**, the basic building block
+   - then the **`Board`**, which is 9 cells
+   - then the click actions, so each click calls the API and the board renders the move from the API response
+5. Got **two-player mode** working end to end, then added the **scoreboard**, **move history** and **game history**.
+6. Played many games to check every flow: wins, draws, undo, reset and invalid moves.
+7. Added a **landing page**, designed with Claude's frontend design skill.
+8. Added **player names**, with a confirm tick to save a name.
+
+### Prompts used (paraphrased)
+- "Give me a clear plan based on the problem statement" (in plan mode), using my chosen stack.
+- "Implement the backend step by step. After each step, review the code and commit."
+- "Test all the endpoints and help me make sure I understand everything."
 - "Convert the frontend to TypeScript."
-- "Is it possible to add player names?", then "you do it."
-- "Once you enter the name, add a small green tick to confirm it."
+- Help with specific frontend components, and a design pass for the landing page.
+- "Add player names", then "add a small green tick to confirm the name."
 
-**What the AI generated**
-- The backend: game rules, computer move logic, store, routes and the API test suite. It was built in reviewed, committed steps.
-- The TypeScript conversion and the API types.
-- Several frontend components (status, controls, move history, scoreboard, game history, mode selector).
-- A first design pass, the player-names feature and the name-confirm tick.
+### Where AI wrote code
+- Much of the backend code, built from my plan in small steps that I reviewed and committed one at a time.
+- The automated API test suite.
+- The TypeScript conversion.
+- Some of the frontend components and the landing page design, which I reviewed and adjusted.
 
-**What I wrote or changed myself**
-- Scaffolded the Vite app and set up Tailwind and React Query.
-- Wrote the `request` helper in `api.ts`, the `Cell` and `Board` components and the first version of the `useGame` hook, following step-by-step guidance.
-- Made later visual refactors of the frontend.
-- Made the scope decisions listed above.
-
-**What I reviewed carefully**
+### What I reviewed carefully
 - **Undo**: board, turn and status are always rebuilt from the move list (`buildState` in `gameLogic.js`), so undo is just removing the last move or the last two.
 - **Scoreboard counted once**: games are counted only on the `InProgress` → `Won`/`Draw` change, in `store.updateGame`.
 - **Computer priority order**: `computer.js`.
 - **Error handling**: rule errors become `400`.
 
-**Bugs found during review and fixed**
+### Bugs found during review and fixed
 - A malformed JSON body returned a `500`. It now returns a `400`.
 - Filled cells weren't locked on the board, because only the "request running" flag was checked.
 - An early version of the status component checked statuses that don't exist (`XWins`). The API uses `Won` plus a `winner` field.
