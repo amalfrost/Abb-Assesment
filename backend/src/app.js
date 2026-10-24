@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { randomUUID } from 'node:crypto';
-import { createGame, makeMove, undoMove, resetGame, GameError } from './gameLogic.js';
+import { createGame, makeMove, undoMove, resetGame, renamePlayers, GameError } from './gameLogic.js';
 import { pickComputerMove } from './computer.js';
 import * as store from './store.js';
 
@@ -30,9 +30,15 @@ app.post('/api/games', (req, res) => {
     return res.status(400).json({ error: `Unsupported mode: ${mode}` });
   }
 
-  const game = createGame(randomUUID(), mode);
+  const game = createGame(randomUUID(), mode, req.body?.players);
   store.addGame(game);
   res.status(201).json(toResponse(game));
+});
+
+app.put('/api/games/:id/players', findGame, (req, res) => {
+  const game = renamePlayers(req.game, req.body ?? {});
+  store.updateGame(game);
+  res.json(toResponse(game));
 });
 
 app.get('/api/games/:id', findGame, (req, res) => {

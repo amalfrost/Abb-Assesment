@@ -8,8 +8,40 @@ export const WIN_LINES = [
 
 export class GameError extends Error {}
 
-export function createGame(id, mode = 'TwoPlayer') {
-  return buildState({ id, mode }, []);
+const DEFAULT_NAMES = { X: 'Player X', O: 'Player O' };
+const MAX_NAME_LENGTH = 20;
+
+function cleanName(name, fallback) {
+  if (name === undefined || name === null) return fallback;
+  if (typeof name !== 'string') {
+    throw new GameError('Player names must be text');
+  }
+  const trimmed = name.trim();
+  if (trimmed.length > MAX_NAME_LENGTH) {
+    throw new GameError(`Player names can be at most ${MAX_NAME_LENGTH} characters`);
+  }
+  return trimmed || fallback;
+}
+
+// In computer mode O is always the computer, whatever name is sent
+function buildPlayers(mode, names = {}) {
+  return {
+    X: cleanName(names.X, DEFAULT_NAMES.X),
+    O: mode === 'Computer' ? 'Computer' : cleanName(names.O, DEFAULT_NAMES.O),
+  };
+}
+
+export function createGame(id, mode = 'TwoPlayer', names) {
+  return buildState({ id, mode, players: buildPlayers(mode, names) }, []);
+}
+
+// Names can change while a game is in progress. Once it's finished they are
+// locked, because the history entry has already recorded who played.
+export function renamePlayers(game, names) {
+  if (game.status !== 'InProgress') {
+    throw new GameError('Cannot rename players after the game is finished');
+  }
+  return { ...game, players: buildPlayers(game.mode, { ...game.players, ...names }) };
 }
 
 export function checkWinner(board) {

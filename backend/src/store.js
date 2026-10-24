@@ -52,6 +52,7 @@ function recordFinishedGame(game) {
     id: history.length + 1,
     gameId: game.id,
     mode: game.mode,
+    players: game.players,
     status: game.status,
     winner: game.winner,
     moves: game.moves,
